@@ -13,11 +13,11 @@ incomplete_path = "/home/gustavo/git/sentiment_analysis/review_polarity/txt_sent
 
 #fill files_neg
 files_names = os.listdir(incomplete_path + "/neg")
-files_neg = files_names[0:299]
+files_neg = files_names[0:700]
 
 #fill files_pos
 files_names = os.listdir(incomplete_path + "/pos")
-files_pos = files_names[0:299]
+files_pos = files_names[0:700]
 
 tokens_with_labels = []
 
@@ -30,11 +30,11 @@ def read_file(path, label):
 		tokens = [w for w in tokens if w not in symbols]
 		tokens_with_labels.append((tokens, label))
 		
-#iterate the name files to read and create tuples	
+#iterate all file names to read and create tuples	
 for i in range(0, 1):
 	path = incomplete_path + "neg/" + files_neg[i]
 	read_file(path, 'neg')
 	path = incomplete_path + "pos/" + files_pos[i]
 	read_file(path, 'pos')
 
-print tokens_with_labels
+#print tokens_with_labels
