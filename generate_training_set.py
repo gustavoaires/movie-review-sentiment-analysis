@@ -39,9 +39,11 @@ for i in range(0, 700):
 	read_file(path, 'neg')
 	path = incomplete_path + "pos/" + files_pos[i]
 	read_file(path, 'pos')
+
+tokens_labels = '/home/gustavo/git/sentiment_analysis/tokens_labels.csv'
 	
 #save data (tokens with labels) into file
-with open('/home/gustavo/git/sentiment_analysis/tokens_labels.csv', 'wb') as csvfile:
+with open(tokens_labels, 'wb') as csvfile:
 	writer = csv.writer(csvfile)
 	for row in tokens_with_labels:
 		data = []
@@ -55,7 +57,7 @@ print tokens_with_labels
 	code to read file
 	this code should go into python file that reads the tokens (better if is not this one)
 """
-#with open('/home/gustavo/git/sentiment_analysis/tokens_labels.csv', 'rb') as csvfile:
+#with open(tokens_labels, 'rb') as csvfile:
 #	spamreader = csv.reader(csvfile)
 #	for row in spamreader:
 #		<storage-tokens-matriz>.append((row[0:-1], row[-1]))
