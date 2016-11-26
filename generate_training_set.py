@@ -68,10 +68,10 @@ def main():
 main()
 
 """	
-	code to read file
-	this code should go into python file that reads the tokens (better if is not this one)
+	code to read file training_set so we can apply naive bayes
+	this code should go into python file that reads the tokens (better if it is not this one)
 """
-#with open(tokens_labels, 'rb') as csvfile:
+#with open(training_set_path, 'rb') as csvfile:
 #	spamreader = csv.reader(csvfile)
 #	for row in spamreader:
 #		<training_set>.append((row[0:-1], row[-1]))
