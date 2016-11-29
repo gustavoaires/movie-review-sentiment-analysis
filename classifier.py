@@ -37,7 +37,8 @@ test_set = []
 
 #path to save training set
 training_set_path = '/home/gustavo/git/sentiment_analysis/training_set.csv'
-test_set_path = '/home/gustavo/git/sentiment_analysis/test_set.csv'
+test_set_path_classified = '/home/gustavo/git/sentiment_analysis/test_set.csv'
+test_set_path_classified = '/home/gustavo/git/sentiment_analysis/test_set_classified.csv'
 
 #reads the file
 def read_file(path, label):
@@ -119,8 +120,6 @@ def calculate_class_probability(df):
 	count_neg = 0.0
 	total = 0.0
 	for index, row in df.iterrows():
-		print row
-		print ' '
 		if row['neg'] > row['pos']:
 			count_neg = count_neg + 1.0
 		elif row['neg'] < row['pos']:
@@ -133,6 +132,7 @@ def calculate_class_probability(df):
 	class_prob_pos = class_prob_pos + aux / 2
 	return class_prob_neg, class_prob_pos
 
+#create list with data from test set file
 def read_file_test_set(path, label):
 	with open(path, 'r') as text_file:
 		text = text_file.read()
@@ -141,23 +141,39 @@ def read_file_test_set(path, label):
 		tokens = []
 		for token in valid_tokens:
 			tokens.append(str(stemmer.stem(token)))
+		#adding path for further identification	
+		tokens.append(path)
 		test_set.append(tokens)
 
+#write test_set
 def write_test_set():
 	with open(test_set_path, 'wb') as csvfile:
 		writer = csv.writer(csvfile)
 		for row in test_set:
 			writer.writerow(row)		
-	
+
+#write test_set classified
+def write_test_set_classified():
+	with open(test_set_path_classified, 'wb') as csvfile:
+		writer = csv.writer(csvfile)
+		for row in test_set:
+			writer.writerow(row)		
+
+#create test set	
 def create_test_set():
 	for i in range(0, 300):
 		path = incomplete_path + "neg/" + neg_files_test_set[i]
 		read_file_test_set(path, 'neg')
 		path = incomplete_path + "pos/" + pos_files_test_set[i]
 		read_file_test_set(path, 'pos')
-	write_test_set()
-	
+
+qtd = 0
+
+#classifier	
 def naive_bayes_classify(document, labels, processed_words, class_probabilities, words_per_class):
+	global qtd
+	qtd = qtd + 1
+	print qtd
 	no_words_in_doc = len(document)
 	current_class_prob = {}
 	
@@ -166,23 +182,25 @@ def naive_bayes_classify(document, labels, processed_words, class_probabilities,
 		for word in document:
 			if word in processed_words:
 				occurence = df.loc[word][label]
-                if occurence > 0:
-                    prob = prob + math.log(occurence,2)
-                else:
-                    prob = prob + math.log(1,2)
+				if occurence > 0:
+					prob = prob + math.log(occurence,2)
+				else:
+					prob = prob + math.log(1,2)
 			else:
-                prob = prob + math.log(1,2)
-        current_class_prob[label] = prob
+				prob = prob + math.log(1,2)
+		current_class_prob[label] = prob
+		
 	sorted_labels = sorted(current_class_prob.items(), key=operator.itemgetter(1))
-    most_probable_class = sorted_labels[-1][0]
-    return most_probable_class
+	most_probable_class = sorted_labels[-1][0]
+	
+	return most_probable_class
     	
 def main():
 	#read_training_set()
 	#count_freq()
 	#write_data_frame()		
-	
 	create_test_set()
+	
 	df = read_data_frame()
 	class_prob_neg, class_prob_pos = calculate_class_probability(df)
 	
@@ -194,15 +212,10 @@ def main():
 	for label in labels:
 		words_per_class[label] = df[label].sum()
 		
-	for document in test_set:
-		classification = naive_bayes_classify(document, labels, processed_words, class_probabilities, words_per_class)
-		row.append(classification)
-		print row
+	for document in test_set[]:
+		classification = naive_bayes_classify(document[:-1], labels, processed_words, class_probabilities, words_per_class)
+		document.append(classification)
+	write_test_set_classified()
 	
 main()
-
-"""	
-	code to read file training_set so we can apply naive bayes
-	this code should go into python file that reads the tokens (better if it is not this one)
-"""
 
