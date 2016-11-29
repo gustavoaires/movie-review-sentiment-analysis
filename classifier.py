@@ -1,3 +1,4 @@
+from __future__ import division
 import nltk
 import os
 import csv
@@ -5,6 +6,7 @@ import re
 import pandas
 import operator
 import math
+
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
@@ -65,9 +67,20 @@ def write_training_set():
 				data.append(w)
 			data.append(row[1])
 			writer.writerow(data)
+		
+words = Set()
+		
+#read training set file		
+def read_training_set():
+	with open(training_set_path, 'rb') as csvfile:
+		spamreader = csv.reader(csvfile)
+		for row in spamreader:
+			training_set.append((row[0:-1], row[-1]))
+			for w in row[0:-1]:
+				words.add(w)
 
 #data frame with the frequency			
-df = pandas.DataFrame(columns=['neg','pos'])
+df = pandas.DataFrame(columns=['neg','pos'], index=words)
 
 def count_freq():
 	words_set = Set()
@@ -91,13 +104,35 @@ def write_data_frame():
 	
 #read data frame from csv file	
 def read_data_frame():
-	df.read_csv(data_frame_path, sep='\t')
+	df = pandas.read_csv(data_frame_path, sep='\t')
+	return df
+	
+#class probabilities	
+class_prob_pos = 0.0
+class_prob_neg = 0.0
+	
+def calculate_class_probability(df):	
+	count_pos = 0.0
+	count_neg = 0.0
+	total = 0.0
+	for index, row in df.iterrows():
+		print row
+		print ' '
+		if row['neg'] > row['pos']:
+			count_neg = count_neg + 1.0
+		elif row['neg'] < row['pos']:
+			count_pos = count_pos + 1.0
+		total = total + 1.0
+	class_prob_neg = count_neg / total
+	class_prob_pos = count_pos / total
+	return class_prob_neg, class_prob_pos
 	
 def main():
-	#get_file_name()
-	#write_training_set()
+	#read_training_set()
 	#count_freq()
-	#write_data_frame()
+	#write_data_frame()		
+	class_prob_neg, class_prob_pos = calculate_class_probability(read_data_frame())
+	print class_prob_neg, class_prob_pos
 
 main()
 
@@ -105,7 +140,4 @@ main()
 	code to read file training_set so we can apply naive bayes
 	this code should go into python file that reads the tokens (better if it is not this one)
 """
-#with open(training_set_path, 'rb') as csvfile:
-#	spamreader = csv.reader(csvfile)
-#	for row in spamreader:
-#		<training_set>.append((row[0:-1], row[-1]))
+
