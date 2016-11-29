@@ -95,7 +95,8 @@ def count_freq():
 				df.loc[word] = [0,0]
 				df.ix[word][label] += 1
 			else:
-				df.ix[word][label] += 1
+				df.ix[word][label] += 1				
+	df.sort_index(by=['neg','pos'],ascending=[True, True], inplace=True)
 
 #path to data frame csv
 data_frame_path = '/home/gustavo/git/sentiment_analysis/data_frame.csv'
@@ -159,6 +160,7 @@ def create_test_set():
 def naive_bayes_classify(document, labels, processed_words, class_probabilities, words_per_class):
 	no_words_in_doc = len(document)
 	current_class_prob = {}
+	
 	for label in labels:
 		prob = math.log(class_probabilities[label],2) - no_words_in_doc * math.log(words_per_class[label],2)
 		for word in document:
@@ -174,12 +176,13 @@ def naive_bayes_classify(document, labels, processed_words, class_probabilities,
 	sorted_labels = sorted(current_class_prob.items(), key=operator.itemgetter(1))
     most_probable_class = sorted_labels[-1][0]
     return most_probable_class
-	
+    	
 def main():
-	#create_test_set()
 	#read_training_set()
 	#count_freq()
 	#write_data_frame()		
+	
+	create_test_set()
 	df = read_data_frame()
 	class_prob_neg, class_prob_pos = calculate_class_probability(df)
 	
@@ -195,7 +198,7 @@ def main():
 		classification = naive_bayes_classify(document, labels, processed_words, class_probabilities, words_per_class)
 		row.append(classification)
 		print row
-
+	
 main()
 
 """	
