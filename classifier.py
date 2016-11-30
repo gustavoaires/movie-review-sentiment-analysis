@@ -37,8 +37,9 @@ test_set = []
 
 #path to save training set
 training_set_path = '/home/gustavo/git/sentiment_analysis/training_set.csv'
-test_set_path_classified = '/home/gustavo/git/sentiment_analysis/test_set.csv'
+test_set_path = '/home/gustavo/git/sentiment_analysis/test_set.csv'
 test_set_path_classified = '/home/gustavo/git/sentiment_analysis/test_set_classified.csv'
+test_set_path_classified_ = '/home/gustavo/git/sentiment_analysis/test_set_classified_.csv'
 
 #reads the file
 def read_file(path, label):
@@ -106,8 +107,8 @@ removed_words_path = '/home/gustavo/git/sentiment_analysis/removed_words.csv'
 
 #write data frame into csv file
 def write_data_frame(df):
-	data = df[0:5491]
-	data2 = df[5491:]
+	data = df[0:12001]
+	data2 = df[12001:]
 	data.to_csv(data_frame_path, sep='\t')
 	data2.to_csv(removed_words_path, sep='\t')
 	return data
@@ -183,7 +184,6 @@ def naive_bayes_classify(document, labels, processed_words, class_probabilities,
 		prob = math.log(class_probabilities[label],2) - no_words_in_doc * math.log(words_per_class[label],2)
 		for word in document:
 			if word in processed_words:
-				print processed_words, word
 				occurence = df.loc[word][label]
 				if occurence > 0:
 					prob = prob + math.log(occurence,2)
@@ -221,14 +221,26 @@ def main():
 	
 	qtd_pos = 0
 	qtd_neg = 0	
+	neg = incomplete_path + "neg/"
+	pos = incomplete_path + "pos/"
+	errou_neg = 0
+	errou_pos = 0
 	for document in test_set:
 		classification = naive_bayes_classify(document[:-1], labels, processed_words, class_probabilities, words_per_class, dataframe)
-		if classification == 'neg': qtd_neg += 1
-		else: qtd_pos += 1
+		if classification == 'neg':
+			qtd_neg += 1
+			if neg not in document[-1]:
+				errou_neg += 1
+		else: 
+			qtd_pos += 1
+			if pos not in document[-1]:
+				errou_pos += 1
 		print classification
 		document.append(classification)
 	write_test_set_classified()
+	print dataframe
 	print qtd_pos, ' - ', qtd_neg
+	print errou_pos, ' - ', errou_neg
+	print class_prob_neg, ' - ', class_prob_pos
 	
 main()
-
