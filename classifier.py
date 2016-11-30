@@ -40,6 +40,7 @@ training_set_path = '/home/gustavo/git/sentiment_analysis/training_set.csv'
 test_set_path = '/home/gustavo/git/sentiment_analysis/test_set.csv'
 test_set_path_classified = '/home/gustavo/git/sentiment_analysis/test_set_classified.csv'
 test_set_path_classified_ = '/home/gustavo/git/sentiment_analysis/test_set_classified_.csv'
+test_set_path_classified__ = '/home/gustavo/git/sentiment_analysis/test_set_classified__.csv'
 
 #reads the file
 def read_file(path, label):
@@ -98,17 +99,17 @@ def count_freq():
 				df.ix[word][label] += 1
 			else:
 				df.ix[word][label] += 1	
-	df.sort_index(by=['neg','pos'],ascending=[False,False], inplace=True)
+	df.sort_index(by=['neg','pos'],ascending=[True,True], inplace=True)
 	return df
 
 #path to data frame csv
-data_frame_path = '/home/gustavo/git/sentiment_analysis/data_frame.csv'
-removed_words_path = '/home/gustavo/git/sentiment_analysis/removed_words.csv'
+data_frame_path = '/home/gustavo/git/sentiment_analysis/data_frame__.csv'
+removed_words_path = '/home/gustavo/git/sentiment_analysis/removed_words__.csv'
 
 #write data frame into csv file
 def write_data_frame(df):
-	data = df[0:12001]
-	data2 = df[12001:]
+	data = df[-12000:]
+	data2 = df[0:-12000]
 	data.to_csv(data_frame_path, sep='\t')
 	data2.to_csv(removed_words_path, sep='\t')
 	return data
@@ -162,7 +163,7 @@ def write_test_set():
 
 #write test_set classified
 def write_test_set_classified():
-	with open(test_set_path_classified, 'wb') as csvfile:
+	with open(test_set_path_classified__, 'wb') as csvfile:
 		writer = csv.writer(csvfile)
 		for row in test_set:
 			writer.writerow(row)		
@@ -203,7 +204,7 @@ def main():
 	#write_data_frame(df)		
 	create_test_set()
 	
-	dataframe = df[0:10000]
+	dataframe = df[-12000:]
 	
 	processed_words = []
 	
