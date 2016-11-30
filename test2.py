@@ -133,10 +133,9 @@ def calculate_class_probability(df):
 		total = total + 1.0
 	class_prob_neg = count_neg / total
 	class_prob_pos = count_pos / total
-	#aux = 1 - (class_prob_neg + class_prob_pos)
-	# + aux / 2
-	class_prob_neg = class_prob_neg
-	class_prob_pos = class_prob_pos
+	aux = 1 - (class_prob_neg + class_prob_pos)
+	class_prob_neg = class_prob_neg + aux / 2
+	class_prob_pos = class_prob_pos + aux / 2
 	return class_prob_neg, class_prob_pos
 
 #create list with data from test set file
@@ -203,7 +202,7 @@ def main():
 	#write_data_frame(df)		
 	create_test_set()
 	
-	dataframe = df[0:10000]
+	dataframe = df[0:5491]
 	
 	processed_words = []
 	
